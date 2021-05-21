@@ -44,6 +44,8 @@ npm run dev
 
 ## 2. Simple Routing
 
+server.js
+
 ```
 const server = http.createServer((req, res) => {
   // get products only with GET method and at "/api/products"
@@ -58,3 +60,9 @@ const server = http.createServer((req, res) => {
   }
 });
 ```
+
+## 3. Create Controller and Model
+
+- Model functions are used to Create, Read, Update, and Delete
+- Controller functions control status codes, headers, and content types
+- Server calls on controller, controller calls on model

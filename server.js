@@ -1,14 +1,19 @@
 const http = require("http");
-const products = require("./data/products");
+const { getProducts, getProduct } = require("./controllers/productController");
 
 const server = http.createServer((req, res) => {
   // get products only with GET method and at "/api/products"
   if (req.url === "/api/products" && req.method === "GET") {
+    getProducts(req, res);
+  }
+  // get product by id, products/1 - products/1000
+  else if (req.url.match(/\/api\/products\/([0-9]+)/) && req.method === "GET") {
+    // regex req.url.split("/")[2] splits url: api/products/3 into array by /
+    const id = req.url.split("/")[3];
+    getProduct(req, res, id);
+  } else {
     // writeHead(arg1, arg2)
     // arg1 is a status code, arg2 is an object
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(JSON.stringify(products));
-  } else {
     res.writeHead(404, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ message: "Route not found!" }));
   }
