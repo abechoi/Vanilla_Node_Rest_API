@@ -5,15 +5,15 @@
 ## Table of Contents
 
 1. [Setup](#setup)
-2. [Setup](#routing)
-3. [Setup](#controller-and-model)
-4. [Setup](#get-/api/products)
-5. [Setup](#get-/api/products/:id)
-6. [Setup](#post-/api/products)
-7. [Setup](#update-/api/products/:id)
-8. [Setup](#delete-/api/products/:id)
+2. [Routing](#routing)
+3. [Controller and Model](#controller-and-model)
+4. [GET Products](#get-/api/products)
+5. [GET Product](#get-/api/products/:id)
+6. [POST Product](#post-/api/products)
+7. [UPDATE Product](#update-/api/products/:id)
+8. [DELETE Product](#delete-/api/products/:id)
 
-## 1. ## Setup
+## Setup
 
 ```
 npm init -y
@@ -54,7 +54,7 @@ server.listen(PORT, () => console.log(`Listening to port:${PORT}`));
 npm run dev
 ```
 
-## 2. ## Routing
+## Routing
 
 server.js
 
@@ -73,13 +73,13 @@ const server = http.createServer((req, res) => {
 });
 ```
 
-## 3. ## Controller and Model
+## Controller and Model
 
 - Model functions are used to Create, Read, Update, and Delete
 - Controller functions control status codes, headers, and content types
 - Server calls on controller, controller calls on model
 
-## 4. ## GET /api/products
+## GET /api/products
 
 server.js
 
@@ -115,7 +115,7 @@ const findAll = () => {
 };
 ```
 
-## 5. ## GET /api/products/:id
+## GET /api/products/:id
 
 server.js
 
@@ -159,7 +159,7 @@ const findById = (id) => {
 }
 ```
 
-## 6. ## POST /api/products
+## POST /api/products
 
 server.js
 
@@ -232,7 +232,7 @@ const create = (product) => {
 };
 ```
 
-## 7. ## UPDATE /api/products/:id
+## UPDATE /api/products/:id
 
 server.js
 
@@ -252,7 +252,7 @@ productModel.js
 
 ```
 
-## 8. ## DELETE /api/products/:id
+## DELETE /api/products/:id
 
 server.js
 
