@@ -24,7 +24,7 @@ npm i uuid
 package.json
 
 ```
-# modify scripts
+// modify scripts
 "scripts": {
   "start": "node server.js",
   "dev": "nodemon server.js"
@@ -37,10 +37,12 @@ server.js
 const http = require("http");
 
 const server = http.createServer((req, res) => {
+
   res.statusCode = 200;
   res.setHeader("Content-Type", "text/html");
   res.write("<h1>Hello World</h1>");
   res.end();
+
 });
 
 // Check for environment variable OR 5000
@@ -60,13 +62,18 @@ server.js
 
 ```
 const server = http.createServer((req, res) => {
+
   // get products only with GET method and at "/api/products"
   if (req.url === "/api/products" && req.method === "GET") {
+
     // writeHead(arg1, arg2)
     // arg1 is a status code, arg2 is an object
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify(products));
+
   } else {
+
+    // 404 - Not Found
     res.writeHead(404, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ message: "Route not found!" }));
   }
@@ -94,11 +101,15 @@ productController.js
 ```
 async function getProducts(_, res) {
   try {
+
+    // get products using findAll()
     const products = await Products.findAll();
+
     // writeHead(arg1, arg2)
     // arg1 is a status code, arg2 is an object
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify(products));
+
   } catch (err) {
     console.log(err);
   }
@@ -121,6 +132,10 @@ server.js
 
 ```
 else if(req.url.match(\/api\/products\/[0-9]+\) && req.method === "GET"){
+
+  // Split /api/products/:id by "/", find the 3rd element
+  const id = req.url.split("/")[3];
+
   getProduct(req, res, id);
 }
 ```
@@ -201,18 +216,34 @@ async function createProduct(req, res) {
 utils.js
 
 ```
-const getPostData = (req) => {
+const writeDataToFile = (filename, content) => {
 
+  // convert content to a string and overwrite file
+  fs.writeFileSync(filename, JSON.stringify(content), "utf8", (err) => {
+    if (err) {
+      console.log(err);
+    }
+
+  });
+};
+
+const getPostData = (req) => {
   return new Promise((resolve, reject) => {
     try {
+
+      // 1. create empty body
       let body = "";
+
+      // 2. on data, convert chunk to string and add to body
+      // 3. on end, resolve body
       req.on("data", (chunk) => {
         body += chunk.toString();
-      });
-      req.on("end", () => {
+      })
+      .on("end", () => {
         resolve(body);
       });
-    } catch (err) {
+    }
+    catch (err) {
       reject(err);
     }
   });
@@ -224,10 +255,19 @@ productModel.js
 ```
 const create = (product) => {
   return new Promise((resolve, reject) => {
+
+    // 1. Create object with product and id
     const newProduct = { id: uuidv4(), ...product };
+
+    // 2. Push object into products
     products.push(newProduct);
+
+    // 3. Overwrite old products
     writeDataToFile("./data/products.json", products);
+
+    // 4. return newProduct
     resolve(newProduct);
+
   });
 };
 ```
