@@ -1,5 +1,9 @@
 const http = require("http");
-const { getProducts, getProduct } = require("./controllers/productController");
+const {
+  getProducts,
+  getProduct,
+  createProduct,
+} = require("./controllers/productController");
 
 const server = http.createServer((req, res) => {
   // get products only with GET method and at "/api/products"
@@ -11,7 +15,13 @@ const server = http.createServer((req, res) => {
     // regex req.url.split("/")[2] splits url: api/products/3 into array by /
     const id = req.url.split("/")[3];
     getProduct(req, res, id);
-  } else {
+  }
+  // create a product
+  else if (req.url === "/api/products" && req.method === "POST") {
+    createProduct(req, res);
+  }
+  // default catch all
+  else {
     // writeHead(arg1, arg2)
     // arg1 is a status code, arg2 is an object
     res.writeHead(404, { "Content-Type": "application/json" });

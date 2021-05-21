@@ -1,8 +1,11 @@
 // Controller functions control status codes, headers, and content types
 const Products = require("../models/productModel");
 
-// GET /api/products
-async function getProducts(req, res) {
+const { getPostData } = require("../utils");
+
+// @desc  Get all products
+// @route GET /api/products
+async function getProducts(_, res) {
   try {
     const products = await Products.findAll();
     // writeHead(arg1, arg2)
@@ -14,8 +17,9 @@ async function getProducts(req, res) {
   }
 }
 
-// GET /api/products/:id
-async function getProduct(req, res, id) {
+// @desc  Get a product by id
+// @route GET /api/products/:id
+async function getProduct(_, res, id) {
   try {
     const product = await Products.findById(id);
 
@@ -31,7 +35,29 @@ async function getProduct(req, res, id) {
   }
 }
 
+// @desc  Create a product
+// @route POST /api/products
+async function createProduct(req, res) {
+  try {
+    // 1. request body
+    const body = await getPostData(req);
+    // 2. parse body, then destructure its properties
+    const { title, description, price } = JSON.parse(body);
+    // 3. create product with properties
+    const product = { title, description, price };
+    // 4. get an id from model
+    const newProduct = await Products.create(product);
+    // 5. add header then return newProduct to endpoint
+    // 201 - created
+    res.writeHead(201, { "Content-Type": "application/json" });
+    return res.end(JSON.stringify(newProduct));
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 module.exports = {
   getProducts,
   getProduct,
+  createProduct,
 };
