@@ -7,11 +7,11 @@
 1. [Setup](#setup)
 2. [Routing](#routing)
 3. [Controller and Model](#controller-and-model)
-4. [GET Products](#get-/api/products)
-5. [GET Product](#get-/api/products/:id)
-6. [POST Product](#post-/api/products)
-7. [UPDATE Product](#update-/api/products/:id)
-8. [DELETE Product](#delete-/api/products/:id)
+4. [GET Products](#get-products)
+5. [GET Product](#get-product)
+6. [POST Product](#post-product)
+7. [UPDATE Product](#update-product)
+8. [DELETE Product](#delete-product)
 
 ## Setup
 
@@ -86,7 +86,7 @@ const server = http.createServer((req, res) => {
 - Controller functions control status codes, headers, and content types
 - Server calls on controller, controller calls on model
 
-## GET /api/products
+## GET Products
 
 server.js
 
@@ -125,7 +125,7 @@ const findAll = () => {
 };
 ```
 
-## GET /api/products/:id
+## GET Product
 
 server.js
 
@@ -178,7 +178,7 @@ const findById = (id) => {
 }
 ```
 
-## POST /api/products
+## POST Product
 
 server.js
 
@@ -276,7 +276,7 @@ const create = (product) => {
 };
 ```
 
-## UPDATE /api/products/:id
+## UPDATE Product
 
 server.js
 
@@ -356,7 +356,7 @@ const update = (id, newProduct) => {
 }
 ```
 
-## DELETE /api/products/:id
+## DELETE Product
 
 server.js
 
