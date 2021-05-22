@@ -37,9 +37,20 @@ const update = (id, newProduct) => {
   });
 };
 
+const remove = (id) => {
+  return new Promise((resolve, reject) => {
+    products = products.filter((product) => product.id !== id);
+    if (process.env.NODE_ENV !== "test") {
+      writeDataToFile("./data/products.json", products);
+    }
+    resolve();
+  });
+};
+
 module.exports = {
   findAll,
   findById,
   create,
   update,
+  remove,
 };

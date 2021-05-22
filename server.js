@@ -4,6 +4,7 @@ const {
   getProduct,
   createProduct,
   updateProduct,
+  deleteProduct,
 } = require("./controllers/productController");
 
 const server = http.createServer((req, res) => {
@@ -26,6 +27,11 @@ const server = http.createServer((req, res) => {
     // regex req.url.split("/")[2] splits url: api/products/3 into array by /
     const id = req.url.split("/")[3];
     updateProduct(req, res, id);
+  }
+  // delete a product
+  else if (req.url.match(/\/api\/products\/\w+/) && req.method === "DELETE") {
+    const id = req.url.split("/")[3];
+    deleteProduct(req, res, id);
   }
   // default catch all
   else {
