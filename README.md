@@ -102,11 +102,10 @@ productController.js
 async function getProducts(_, res) {
   try {
 
-    // get products using findAll()
-    const products = await Products.findAll();
+    // 1. Get products.
+    const products = await Product.findAll();
 
-    // writeHead(arg1, arg2)
-    // arg1 is a status code, arg2 is an object
+    // 2. Respond with status code, header, and products as a string.
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify(products));
 
@@ -131,7 +130,7 @@ const findAll = () => {
 server.js
 
 ```
-else if(req.url.match(\/api\/products\/[0-9]+\) && req.method === "GET"){
+else if(req.url.match(\/api\/products\/\w+\) && req.method === "GET"){
 
   // Split /api/products/:id by "/", find the 3rd element
   const id = req.url.split("/")[3];
@@ -144,15 +143,20 @@ productController.js
 
 ```
 async function getProduct(req, res, id){
-
   try {
 
-    const product = await Products.findById(id);
+    // 1. Get product by id.
+    const product = await Product.findById(id);
 
     if(!product){
+
+      // 2. If product does not exist, respond with a 404.
       res.writeHead( 404, { "Content-Type": "application/json" })
       res.end(JSON.stringify({ message: "Product not found!" }))
+
     } else {
+
+      // 3. Else, respond with product as a string.
       res.writeHead( 200, { "Content-Type": "application/json" })
       res.end(JSON.stringify(product))
     }
@@ -190,19 +194,19 @@ productController.js
 async function createProduct(req, res) {
   try {
 
-    // 1. request body
+    // 1. Request body.
     const body = await getPostData(req);
 
-    // 2. parse body, then destructure its properties
+    // 2. Parse body, then destructure its properties.
     const { title, description, price } = JSON.parse(body);
 
-    // 3. create product with properties
+    // 3. Create product with properties.
     const product = { title, description, price };
 
-    // 4. get an id from model
-    const newProduct = await Products.create(product);
+    // 4. Get an id from model.
+    const newProduct = await Product.create(product);
 
-    // 5. add header then return newProduct to endpoint
+    // 5. Add header then return newProduct to endpoint.
     // 201 - created
     res.writeHead(201, { "Content-Type": "application/json" });
     return res.end(JSON.stringify(newProduct));
@@ -231,11 +235,11 @@ const getPostData = (req) => {
   return new Promise((resolve, reject) => {
     try {
 
-      // 1. create empty body
+      // 1. Create empty body.
       let body = "";
 
-      // 2. on data, convert chunk to string and add to body
-      // 3. on end, resolve body
+      // 2. On data, convert chunk to string and add to body.
+      // 3. On end, resolve body.
       req.on("data", (chunk) => {
         body += chunk.toString();
       })
@@ -256,16 +260,16 @@ productModel.js
 const create = (product) => {
   return new Promise((resolve, reject) => {
 
-    // 1. Create object with product and id
+    // 1. Create object with product and id.
     const newProduct = { id: uuidv4(), ...product };
 
-    // 2. Push object into products
+    // 2. Push object into products.
     products.push(newProduct);
 
-    // 3. Overwrite old products
+    // 3. Overwrite old products.
     writeDataToFile("./data/products.json", products);
 
-    // 4. return newProduct
+    // 4. Resolve newProduct.
     resolve(newProduct);
 
   });
@@ -277,19 +281,79 @@ const create = (product) => {
 server.js
 
 ```
-
+else if( req.url.match(\/api/\products\/\w+\) && req.method === "PUT" ){
+  const id = req.url.split("/")[3];
+  updateProduct(req, res, id);
+}
 ```
 
 productController.js
 
 ```
+async function updateProduct(req, res, id){
+  try{
 
+    // 1. Get product by id.
+    const product = await Product.findById(id);
+
+    if(!product){
+
+      // 2. If product does not exist, respond with a 404.
+      res.writeHead(404, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ message: "Product not found!" }))
+
+    }else{
+
+      // 3. Request body.
+      const body = await getPostData(req);
+
+      // 4. Parse body, then destructure its properties.
+      const { title, description, price } = JSON.parse(body);
+
+      // 5. Create newProduct with old and new properties.
+      const newProduct = {
+        title: title || product.title;
+        description: description || product.description;
+        price: price || product.price
+      };
+
+      // 6. Create updatedProduct from model with id and newProduct.
+      const updatedProduct = await Product.update(id, newProduct);
+
+      // 7. Add header then return newProduct to endpoint.
+      res.writeHead( 200, { "Content-Type": "application/json" } );
+      res.end(JSON.stringify(updatedProduct));
+
+    }
+
+  }catch(err){
+    console.log(err);
+  }
+}
 ```
 
 productModel.js
 
 ```
+const update = (id, newProduct) => {
+  return new Promise((resolve, reject) => {
 
+    // 1. Get index by id.
+    const index = products.findIndex(product => product.id === id);
+
+    // 2. Replace products[index] with a id and newProduct.
+    products[index] = { id, ...newProduct };
+
+    // 3. Overwrite old products.
+    if( process.env.NODE_ENV !== "test" ){
+      writeDataToFile("./data/products.json", products);
+    }
+
+    // 4. Resolve products[index].
+    resolve(products[index]);
+
+  });
+}
 ```
 
 ## DELETE /api/products/:id
