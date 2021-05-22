@@ -26,8 +26,20 @@ const create = (product) => {
   });
 };
 
+const update = (id, newProduct) => {
+  return new Promise((resolve, reject) => {
+    const index = products.findIndex((product) => product.id === id);
+    products[index] = { id, ...newProduct };
+    if (process.env.NODE_ENV !== "test") {
+      writeDataToFile("./data/products.json", products);
+    }
+    resolve(products[index]);
+  });
+};
+
 module.exports = {
   findAll,
   findById,
   create,
+  update,
 };
