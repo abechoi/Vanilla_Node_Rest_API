@@ -361,17 +361,57 @@ const update = (id, newProduct) => {
 server.js
 
 ```
-
+else if( req.url.match(/\/api\/products\/\w+/) && req.method === "DELETE" ){
+  const id = req.url.split("/")[3];
+  deleteProduct(req, res, id);
+}
 ```
 
 productController.js
 
 ```
+async function deleteProduct(req, res, id){
+  try{
 
+    // 1. Get product by id.
+    const product = await Product.findById(id);
+
+    if(!product){
+
+      // 2. If product does not exist, respond with a 404.
+      res.writeHead( 404, { "Content-Type": "application/json" } );
+      res.end(JSON.stringify({ message: "Product not found!" }));
+
+    }else{
+
+      // 3. Remove prduct by id.
+      await Product.remove(id);
+
+      // 4. Else, respond with confirmation message.
+      res.writeHead( 200, { "Content-Type": "application/json" } );
+      res.end(JSON.stringify({ message: `Product:${id} removed.` }));
+
+    }
+
+  }catch(err){
+    console.log(err);
+  }
+}
 ```
 
 productModel.js
 
 ```
+const remove = (id) => {
+  return new Promise((resolve, reject) => {
 
+    const newProducts = products.filter(product => product.id !== id);
+
+    if( process.env.NODE_ENV !== "test" ){
+      writeDataToFile("./data/products.json", newProducts);
+
+    }
+    resolve();
+  });
+}
 ```
