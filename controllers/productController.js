@@ -50,7 +50,7 @@ async function createProduct(req, res) {
     // 5. add header then return newProduct to endpoint
     // 201 - created
     res.writeHead(201, { "Content-Type": "application/json" });
-    return res.end(JSON.stringify(newProduct));
+    res.end(JSON.stringify(newProduct));
   } catch (err) {
     console.log(err);
   }
@@ -88,7 +88,7 @@ async function updateProduct(req, res, id) {
 
 // @desc  Delete a product
 // @route DELETE /api/products/:id
-async function deleteProduct(req, res, id) {
+async function deleteProduct(_, res, id) {
   try {
     const product = await Product.findById(id);
 

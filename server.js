@@ -1,3 +1,5 @@
+// Vanilla Node REST API
+
 const http = require("http");
 const {
   getProducts,
